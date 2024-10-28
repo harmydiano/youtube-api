@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Video Detail</title>
+  <style>
+    #comments { margin-top: 20px; max-height: 500px; overflow-y: scroll; }
+    .comment { border-bottom: 1px solid #ddd; padding: 10px 0; }
+    #errorMessage { color: red; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>YouTube Video Details</h1>
+  <label for="videoId">Enter Video ID:</label>
+  <input type="text" id="videoId">
+  <button onclick="fetchVideoDetails()">Fetch Video Details</button>
+
+  <div id="errorMessage"></div> <!-- Error message display -->
+
+  <div id="videoDetails" style="margin-top: 20px;">
+    <h2 id="title"></h2>
+    <p id="description"></p>
+    <p><strong>Views:</strong> <span id="viewCount"></span></p>
+    <p><strong>Likes:</strong> <span id="likeCount"></span></p>
+  </div>
+
+  <div id="comments">
+    <h3>Comments</h3>
+    <div id="commentsList"></div>
+    <button id="loadMore" onclick="loadMoreComments()">Load More Comments</button>
+  </div>
+
+  <script>
+    let videoId = '';
+    let comments = [];  // Store all retrieved comments
+    let displayedComments = 0;  // Track number of comments displayed
+    let nextPageToken = '';  // Store next page token
+    const commentsList = document.getElementById('commentsList');
+    const loadMoreButton = document.getElementById('loadMore');
+    const errorMessageContainer = document.getElementById('errorMessage');
+
+    async function fetchVideoDetails() {
+      videoId = document.getElementById('videoId').value;
+      if (!videoId) {
+        alert('Please enter a video ID');
+        return;
+      }
+
+      errorMessageContainer.textContent = ''; // Clear previous errors
+
+      try {
+        const response = await fetch(`/api/v1/video?videoId=${videoId}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.meta.error.message);
+        }
+
+        document.getElementById('title').textContent = data.data.title;
+        document.getElementById('description').textContent = data.data.description;
+        document.getElementById('viewCount').textContent = data.data.viewCount;
+        document.getElementById('likeCount').textContent = data.data.likeCount;
+
+        const commentResponse = await fetch(`/api/v1/video/comments?videoId=${videoId}`);
+        const commentData = await commentResponse.json();
+
+        if (!commentResponse.ok) {
+          throw new Error(commentData.meta.error.message);
+        }
+
+        comments = commentData.data.comments;
+        nextPageToken = commentData.data.newToken;
+        displayedComments = 0;
+
+        loadComments(20);
+        loadMoreButton.style.display = comments.length > 20 || nextPageToken ? 'block' : 'none';
+
+      } catch (error) {
+        errorMessageContainer.textContent = error.message;
+      }
+    }
+
+    function loadComments(count) {
+      const commentsToShow = comments.slice(displayedComments, displayedComments + count);
+      commentsToShow.forEach(items => {
+        const commentEl = document.createElement('div');
+        commentEl.classList.add('comment');
+        commentEl.textContent = items.comment;
+        commentsList.appendChild(commentEl);
+      });
+      displayedComments += commentsToShow.length;
+
+      if (displayedComments >= comments.length && !nextPageToken) {
+        loadMoreButton.style.display = 'none';
+      }
+    }
+
+    async function loadMoreComments() {
+      if (displayedComments < comments.length) {
+        loadComments(20);
+      } else if (nextPageToken) {
+        try {
+          const response = await fetch(`/api/v1/video/comments?videoId=${videoId}&pageToken=${nextPageToken}`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.meta.error.message);
+          }
+
+          comments = data.data.comments;
+          nextPageToken = data.data.newToken;
+          displayedComments = 0;
+          loadComments(20);
+        } catch (error) {
+          errorMessageContainer.textContent = error.message;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
