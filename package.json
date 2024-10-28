@@ -1,0 +1,42 @@
+{
+  "name": "youtube-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "engines": {
+    "node": "18.2.0",
+    "npm": "8.9.0"
+  },
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "nodemon --exec \"babel-node src/app.js\""
+  },
+  "author": "Hamid",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/node": "^7.8.7",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/register": "^7.9.0",
+    "axios": "^1.7.7",
+    "body-parser": "^1.20.3",
+    "config": "^3.3.12",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "express-session": "^1.18.1",
+    "joi": "^17.13.3",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.7.3",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.7",
+    "q": "^1.5.1",
+    "session": "^0.1.0",
+    "winston": "^3.15.0"
+  }
+}
