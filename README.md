@@ -36,32 +36,16 @@ This API allows users to fetch details of YouTube videos and their comments usin
    YOUTUBE_API_URL=https://www.googleapis.com/youtube/v3
    ```
 
-## API Endpoints
+5. **Start the application:**
 
-### Fetch Video Details
+   ```bash
+   npm start
+   ```
 
-**Endpoint:** `GET /api/v1/video?videoId=`
+## API Documentation
 
-**Description:** Fetches details of a specified YouTube video.
+<https://documenter.getpostman.com/view/4900546/2sAY4uCNmr>
 
-**Parameters:**
+## UI URL
 
-- `videoId`: The ID of the YouTube video.
-
-**Response:**
-
-```json
-{
-  "meta": {
-   "status_code": 200,
-   "success": true
-   },
-  "value": {
-      "title": "Video Title",
-      "description": "Video Description",
-      "viewCount": 1000,
-      "likeCount": 100
-  }
-}
-
-
+<https://service-api-456570975d23.herokuapp.com/>
